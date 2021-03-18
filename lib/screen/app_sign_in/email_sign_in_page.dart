@@ -8,7 +8,7 @@ class EmailSignInPage extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
-          'Time Tracker',
+          'Email',
         ),
         centerTitle: true, // this is all you need
         elevation: 2.0,
