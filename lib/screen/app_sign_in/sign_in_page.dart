@@ -30,6 +30,19 @@ class SignInPage extends StatelessWidget {
       print(e.toString());
     }
   }
+
+  Future<void> _signInWithFacebook() async
+  {
+    try{
+      auth.signInWithFacebook();
+
+    }
+    catch(e)
+    {
+      print(e.toString());
+
+    }
+  }
   @override
   Widget build(BuildContext context) {
     // shortcut => extend selection => ctrl + arrow up + press button W
@@ -80,7 +93,7 @@ class SignInPage extends StatelessWidget {
             SocialSignInButton(
               assetName: 'images/facebook-logo.png',
               txt: "Sign in with Facebook",
-              onPressed: () {},
+              onPressed: _signInWithFacebook,
               txtColor: Colors.black87,
               color: Color(0xFF334D92),
             ),
