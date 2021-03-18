@@ -9,7 +9,7 @@ class SignInPage extends StatelessWidget {
 
   final AuthBase auth ;
 
-  void _signInAnonymously() async
+  Future<void> _signInAnonymously() async
   {
     try{
              auth.signInAnonymously();
@@ -20,6 +20,16 @@ class SignInPage extends StatelessWidget {
     }
   }
 
+  Future<void> _signInWithGoogle() async
+  {
+    try{
+      auth.signInWithGoogle();
+
+    }catch(e)
+    {
+      print(e.toString());
+    }
+  }
   @override
   Widget build(BuildContext context) {
     // shortcut => extend selection => ctrl + arrow up + press button W
@@ -60,7 +70,7 @@ class SignInPage extends StatelessWidget {
             SocialSignInButton(
               assetName: 'images/google-logo.png',
               txt: "Sign in with Google",
-              onPressed: () {},
+              onPressed:_signInWithGoogle,
               txtColor: Colors.black87,
               color: Colors.white,
             ),
@@ -121,7 +131,5 @@ class SignInPage extends StatelessWidget {
     );
   }
 
-  void _signInWithGoogle() {
-    // TODO: Auth with Google
-  }
+
 }
