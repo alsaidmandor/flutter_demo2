@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_demo2/screen/app_sign_in/email_sign_in_page.dart';
 import 'package:flutter_demo2/screen/app_sign_in/sign_in_button.dart';
 import 'package:flutter_demo2/screen/app_sign_in/social_sign_in_button.dart';
 import 'package:flutter_demo2/services/auth.dart';
@@ -43,6 +44,16 @@ class SignInPage extends StatelessWidget {
 
     }
   }
+
+  void _signInWithEmail (BuildContext context)
+  {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        fullscreenDialog: true,
+          builder: (context) => EmailSignInPage(),),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // shortcut => extend selection => ctrl + arrow up + press button W
@@ -55,12 +66,12 @@ class SignInPage extends StatelessWidget {
         centerTitle: true, // this is all you need
         elevation: 2.0,
       ),
-      body: _buildContent(),
+      body: _buildContent(context),
     );
   }
 
 // private
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(
@@ -102,7 +113,7 @@ class SignInPage extends StatelessWidget {
             ),
             SignInButton(
               txt: "Sign in with email",
-              onPressed: () {},
+              onPressed:() => _signInWithEmail(context),
               color: Colors.teal,
             ),
             SizedBox(height: 8.0,)
