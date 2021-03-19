@@ -30,12 +30,13 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
 
   bool _submitted = false ;
 
+  bool _isLoading = false ;
   void _submit() async {
     setState(() {
       _submitted = true ;
+      _isLoading = true ;
     });
     try {
-      Future.delayed(Duration(seconds: 3) );
       if (_formType == EmailSignInFormType.signIn) {
         await widget.auth.signInWithEmailAndPassword(_email, _password);
       } else {
@@ -45,6 +46,12 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
     } catch (e) {
       print(e.toString());
     }
+    finally
+        {
+          setState(() {
+            _isLoading = false ;
+          });
+        }
   }
 
   void _emailEditingComplete() {
@@ -71,7 +78,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
         : 'Have an account ? Sign In';
 
     bool submitEnable = widget.emailValidator.isValid(_email) &&
-        widget.emailValidator.isValid(_password);
+        widget.emailValidator.isValid(_password) && !_isLoading;
 
     return [
       _buildEmailTextField(),
@@ -90,7 +97,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
         height: 8.0,
       ),
       TextButton(
-        onPressed: _toggleFormType,
+        onPressed: !_isLoading ? _toggleFormType : null,
         child: Text(
           secondaryText,
           style: TextStyle(
@@ -110,6 +117,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       decoration: InputDecoration(
         labelText: 'Password',
         errorText: showErrorText ?  widget.invalidPasswordErrorText : null ,
+        enabled: _isLoading == false
       ),
       obscureText: true,
       textInputAction: TextInputAction.done,
@@ -129,6 +137,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
         labelText: 'Email',
         hintText: 'test@test.com',
         errorText: showErrorText ? widget.invalidEmailErrorText : null ,
+          enabled: _isLoading == false
       ),
       onChanged: (email) => updateState(),
       autocorrect: false,
