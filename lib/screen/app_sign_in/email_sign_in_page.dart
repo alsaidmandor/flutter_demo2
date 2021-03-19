@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo2/services/auth_provider.dart';
 
 import 'email_sign_in_form.dart';
 
@@ -8,7 +7,6 @@ class EmailSignInPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final auth = AuthProvider.of(context);
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
