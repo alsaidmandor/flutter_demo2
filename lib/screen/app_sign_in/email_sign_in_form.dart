@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo2/common_widget/form_submit_button.dart';
+import 'package:flutter_demo2/screen/app_sign_in/validator.dart';
+import 'package:flutter_demo2/services/auth.dart';
 
 enum EmailSignInFormType { signIn, register }
 
-class EmailSignInForm extends StatefulWidget {
+class EmailSignInForm extends StatefulWidget with EmailAndPasswordValidators {
+  EmailSignInForm({@required this.auth});
+
+  final AuthBase auth;
+
   @override
   _EmailSignInFormState createState() => _EmailSignInFormState();
 }
@@ -11,12 +17,33 @@ class EmailSignInForm extends StatefulWidget {
 
 class _EmailSignInFormState extends State<EmailSignInForm> {
   final TextEditingController _emailController = TextEditingController();
-
   final TextEditingController _passwordController = TextEditingController();
+
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
 
   EmailSignInFormType _formType = EmailSignInFormType.signIn;
 
-  void _submit() {}
+  String get _email => _emailController.text;
+
+  String get _password => _passwordController.text;
+
+  void _submit() async {
+    try {
+      if (_formType == EmailSignInFormType.signIn) {
+        await widget.auth.signInWithEmailAndPassword(_email, _password);
+      } else {
+        await widget.auth.createUserWithEmailAndPassword(_email, _password);
+      }
+      Navigator.of(context).pop();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void _emailEditingComplete() {
+    FocusScope.of(context).requestFocus(_passwordFocusNode);
+  }
 
   void _toggleFormType() {
     setState(() {
@@ -24,8 +51,8 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
           ? EmailSignInFormType.register
           : EmailSignInFormType.signIn;
     });
-    _emailController.clear() ;
-    _passwordController.clear() ;
+    _emailController.clear();
+    _passwordController.clear();
   }
 
   List<Widget> _buildChildren() {
@@ -35,27 +62,21 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
     final secondaryText = _formType == EmailSignInFormType.signIn
         ? 'Need an account ? Register'
         : 'Have an account ? Sign In';
+
+    bool submitEnable = widget.emailValidator.isValid(_email) &&
+        widget.emailValidator.isValid(_password);
+
     return [
-      TextField(
-        controller: _emailController,
-        decoration:
-            InputDecoration(labelText: 'Email', hintText: 'test@test.com'),
-      ),
+      _buildEmailTextField(),
       SizedBox(
         height: 8.0,
       ),
-      TextField(
-        controller: _passwordController,
-        decoration: InputDecoration(
-          labelText: 'Password',
-        ),
-        obscureText: true,
-      ),
+      _buildPasswordTextField(),
       SizedBox(
         height: 8.0,
       ),
       FormSubmitButton(
-        onPressed: () {},
+        onPressed: submitEnable ? _submit : null,
         txt: primaryText,
       ),
       SizedBox(
@@ -73,6 +94,41 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
     ];
   }
 
+  TextField _buildPasswordTextField() {
+    return TextField(
+      controller: _passwordController,
+      focusNode: _passwordFocusNode,
+      decoration: InputDecoration(
+        labelText: 'Password',
+      ),
+      obscureText: true,
+      textInputAction: TextInputAction.done,
+      // enable to done or submit
+      onEditingComplete: _submit,
+      onChanged: (email) => updateState(),
+    );
+  }
+
+  TextField _buildEmailTextField() {
+    return TextField(
+      controller: _emailController,
+      focusNode: _emailFocusNode,
+      // use this for focus or show Keyboard when click email page
+      decoration: InputDecoration(
+        labelText: 'Email',
+        hintText: 'test@test.com',
+      ),
+      onChanged: (email) => updateState(),
+      autocorrect: false,
+      // hide th top bar for keyboard
+      keyboardType: TextInputType.emailAddress,
+      textInputAction: TextInputAction.next,
+      // enable to next textField
+      onEditingComplete:
+          _emailEditingComplete, // use this onEditingComplete when editableText.onEditingComplete
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -84,4 +140,8 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       ),
     );
   }
+
+  void updateState() {
+    setState(() {});
+  } // use this method to enable button when write at least one letter in password after complete email
 }
