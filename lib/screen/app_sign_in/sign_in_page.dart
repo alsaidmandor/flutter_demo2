@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_demo2/common_widget/show_exception_alert_dialog.dart';
 import 'package:flutter_demo2/screen/app_sign_in/email_sign_in_page.dart';
 import 'package:flutter_demo2/screen/app_sign_in/sign_in_button.dart';
 import 'package:flutter_demo2/screen/app_sign_in/social_sign_in_button.dart';
@@ -6,53 +8,55 @@ import 'package:flutter_demo2/services/auth.dart';
 import 'package:provider/provider.dart';
 
 class SignInPage extends StatelessWidget {
+  void _showSignInError(BuildContext context, Exception exception) {
 
-  Future<void> _signInAnonymously(BuildContext context) async
-  {
-    try{
+    if(exception is FirebaseException && exception.code == "ERROR_ABORTED_BY_USER")
+      {
+        return ;
+      }
+    showExceptionAlertDialog(
+      context,
+      title: 'Sign In Failed',
+      exception: exception,
+    );
+  }
+
+  Future<void> _signInAnonymously(BuildContext context) async {
+    try {
       final auth = Provider.of<AuthBase>(context, listen: false);
 
       auth.signInAnonymously();
-
-      }catch(e)
+    }on Exception catch (e)
     {
-      print(e.toString());
+      _showSignInError(context, e);
     }
   }
 
-  Future<void> _signInWithGoogle(BuildContext context) async
-  {
-    try{
+  Future<void> _signInWithGoogle(BuildContext context) async {
+    try {
       final auth = Provider.of<AuthBase>(context, listen: false);
       auth.signInWithGoogle();
-
-    }catch(e)
-    {
-      print(e.toString());
+    }on Exception catch (e) {
+      _showSignInError(context, e);
     }
   }
 
-  Future<void> _signInWithFacebook(BuildContext context) async
-  {
-    try{
+  Future<void> _signInWithFacebook(BuildContext context) async {
+    try {
       final auth = Provider.of<AuthBase>(context, listen: false);
 
       auth.signInWithFacebook();
-
-    }
-    catch(e)
-    {
-      print(e.toString());
-
+    } on Exception catch (e) {
+      _showSignInError(context, e);
     }
   }
 
-  void _signInWithEmail (BuildContext context)
-  {
+  void _signInWithEmail(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         fullscreenDialog: true,
-          builder: (context) => EmailSignInPage(),),
+        builder: (context) => EmailSignInPage(),
+      ),
     );
   }
 
@@ -96,7 +100,7 @@ class SignInPage extends StatelessWidget {
             SocialSignInButton(
               assetName: 'images/google-logo.png',
               txt: "Sign in with Google",
-              onPressed:() => _signInWithGoogle(context),
+              onPressed: () => _signInWithGoogle(context),
               txtColor: Colors.black87,
               color: Colors.white,
             ),
@@ -106,7 +110,7 @@ class SignInPage extends StatelessWidget {
             SocialSignInButton(
               assetName: 'images/facebook-logo.png',
               txt: "Sign in with Facebook",
-              onPressed:() =>  _signInWithFacebook(context),
+              onPressed: () => _signInWithFacebook(context),
               txtColor: Colors.black87,
               color: Color(0xFF334D92),
             ),
@@ -115,11 +119,12 @@ class SignInPage extends StatelessWidget {
             ),
             SignInButton(
               txt: "Sign in with email",
-              onPressed:() => _signInWithEmail(context),
+              onPressed: () => _signInWithEmail(context),
               color: Colors.teal,
             ),
-            SizedBox(height: 8.0,)
-            ,
+            SizedBox(
+              height: 8.0,
+            ),
             Text(
               'or',
               style: TextStyle(
@@ -133,7 +138,7 @@ class SignInPage extends StatelessWidget {
             ),
             SignInButton(
               txt: "Go anonymous",
-              onPressed:() =>  _signInAnonymously(context),
+              onPressed: () => _signInAnonymously(context),
               color: Colors.lime[300],
             ),
 
@@ -156,6 +161,4 @@ class SignInPage extends StatelessWidget {
       ),
     );
   }
-
-
 }
