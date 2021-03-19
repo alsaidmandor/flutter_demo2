@@ -3,17 +3,16 @@ import 'package:flutter_demo2/screen/app_sign_in/email_sign_in_page.dart';
 import 'package:flutter_demo2/screen/app_sign_in/sign_in_button.dart';
 import 'package:flutter_demo2/screen/app_sign_in/social_sign_in_button.dart';
 import 'package:flutter_demo2/services/auth.dart';
+import 'package:flutter_demo2/services/auth_provider.dart';
 
 class SignInPage extends StatelessWidget {
 
-  const SignInPage({Key key, @required this.auth}) : super(key: key);
-
-  final AuthBase auth ;
-
-  Future<void> _signInAnonymously() async
+  Future<void> _signInAnonymously(BuildContext context) async
   {
     try{
-             auth.signInAnonymously();
+      final auth = AuthProvider.of(context);
+
+      auth.signInAnonymously();
 
       }catch(e)
     {
@@ -21,9 +20,10 @@ class SignInPage extends StatelessWidget {
     }
   }
 
-  Future<void> _signInWithGoogle() async
+  Future<void> _signInWithGoogle(BuildContext context) async
   {
     try{
+      final auth = AuthProvider.of(context);
       auth.signInWithGoogle();
 
     }catch(e)
@@ -32,9 +32,11 @@ class SignInPage extends StatelessWidget {
     }
   }
 
-  Future<void> _signInWithFacebook() async
+  Future<void> _signInWithFacebook(BuildContext context) async
   {
     try{
+      final auth = AuthProvider.of(context);
+
       auth.signInWithFacebook();
 
     }
@@ -50,7 +52,7 @@ class SignInPage extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         fullscreenDialog: true,
-          builder: (context) => EmailSignInPage(auth: auth,),),
+          builder: (context) => EmailSignInPage(),),
     );
   }
 
@@ -94,7 +96,7 @@ class SignInPage extends StatelessWidget {
             SocialSignInButton(
               assetName: 'images/google-logo.png',
               txt: "Sign in with Google",
-              onPressed:_signInWithGoogle,
+              onPressed:() => _signInWithGoogle(context),
               txtColor: Colors.black87,
               color: Colors.white,
             ),
@@ -104,7 +106,7 @@ class SignInPage extends StatelessWidget {
             SocialSignInButton(
               assetName: 'images/facebook-logo.png',
               txt: "Sign in with Facebook",
-              onPressed: _signInWithFacebook,
+              onPressed:() =>  _signInWithFacebook(context),
               txtColor: Colors.black87,
               color: Color(0xFF334D92),
             ),
@@ -131,7 +133,7 @@ class SignInPage extends StatelessWidget {
             ),
             SignInButton(
               txt: "Go anonymous",
-              onPressed: _signInAnonymously,
+              onPressed:() =>  _signInAnonymously(context),
               color: Colors.lime[300],
             ),
 

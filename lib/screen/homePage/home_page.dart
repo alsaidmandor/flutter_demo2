@@ -1,15 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo2/common_widget/show_alert_dialog.dart';
-import 'package:flutter_demo2/services/auth.dart';
+import 'package:flutter_demo2/services/auth_provider.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key key, @required this.auth}) : super(key: key);
 
-  final AuthBase auth;
 
-  void _signOt() async {
+  void _signOt(BuildContext context) async {
     try {
+      final auth = AuthProvider.of(context);
       await auth.signOut();
     } catch (e) {
       print(e.toString());
@@ -26,7 +24,7 @@ class HomePage extends StatelessWidget {
 print(didRequestSignOut.toString());
     if(didRequestSignOut == true)
       {
-        _signOt() ;
+        _signOt(context) ;
       }
   }
 

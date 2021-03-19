@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo2/services/auth.dart';
+import 'package:flutter_demo2/services/auth_provider.dart';
 
 import 'email_sign_in_form.dart';
 
 class EmailSignInPage extends StatelessWidget {
-  const EmailSignInPage({Key key, this.auth}) : super(key: key);
 
-  final AuthBase auth;
+
   @override
   Widget build(BuildContext context) {
+    final auth = AuthProvider.of(context);
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -22,7 +22,7 @@ class EmailSignInPage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Card(
-              child: EmailSignInForm(auth: auth),
+              child: EmailSignInForm(),
           ),
         ),
       ),
