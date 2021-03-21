@@ -2,22 +2,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo2/common_widget/form_submit_button.dart';
-import 'package:flutter_demo2/common_widget/show_alert_dialog.dart';
 import 'package:flutter_demo2/common_widget/show_exception_alert_dialog.dart';
+import 'package:flutter_demo2/models/email_sign_in_Model.dart';
 import 'package:flutter_demo2/screen/app_sign_in/validator.dart';
 import 'package:flutter_demo2/services/auth.dart';
 import 'package:provider/provider.dart';
 
-enum EmailSignInFormType { signIn, register }
 
-class EmailSignInForm extends StatefulWidget with EmailAndPasswordValidators {
+class EmailSignInFormStateful extends StatefulWidget with EmailAndPasswordValidators {
 
   @override
-  _EmailSignInFormState createState() => _EmailSignInFormState();
+  _EmailSignInFormStatefulState createState() => _EmailSignInFormStatefulState();
 }
 // TextEditingController uses StatefulWidget not StatelessWidget .
 
-class _EmailSignInFormState extends State<EmailSignInForm> {
+class _EmailSignInFormStatefulState extends State<EmailSignInFormStateful> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -46,6 +45,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
 
   void _submit() async {
     setState(() {
+
       _submitted = true;
       _isLoading = true;
     });
