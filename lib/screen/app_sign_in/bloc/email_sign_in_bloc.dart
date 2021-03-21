@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo2/models/email_sign_in_Model.dart';
 import 'package:flutter_demo2/services/auth.dart';
@@ -9,6 +8,7 @@ class EmailSignInBloc {
   EmailSignInBloc({@required this.auth});
 
   final AuthBase auth;
+
 
   final StreamController<EmailSignInModel> _modelController =
       StreamController<EmailSignInModel>();
