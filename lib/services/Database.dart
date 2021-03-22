@@ -7,7 +7,7 @@ import 'api_path.dart';
 
 abstract class DataBase {
   Future<void> setJob(Job job);
-
+  Future<void> deleteJob (Job job);
   Stream<List<Job>> jobsStream();
 }
 
@@ -24,6 +24,9 @@ class FireStoreDatabase implements DataBase {
         path: ApiPath.job(uId, job.id),
         data: job.toMap(),
       );
+
+  @override
+  Future<void> deleteJob (Job job)=>_service.deleteData(path: ApiPath.job(uId, job.id));
 
   Stream<List<Job>> jobsStream() => _service.collectionStream(
         path: ApiPath.jobs(uId),
