@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_demo2/common_widget/show_alert_dialog.dart';
 import 'package:flutter_demo2/common_widget/show_exception_alert_dialog.dart';
 import 'package:flutter_demo2/models/job.dart';
+import 'package:flutter_demo2/screen/homePage/empty_content.dart';
 import 'package:flutter_demo2/screen/homePage/job_list_tile.dart';
 import 'package:flutter_demo2/screen/homePage/edit_job_page.dart';
+import 'package:flutter_demo2/screen/homePage/list_items_builder.dart';
 import 'package:flutter_demo2/services/Database.dart';
 import 'package:flutter_demo2/services/auth.dart';
 import 'package:provider/provider.dart';
@@ -60,24 +62,10 @@ class JobsPage extends StatelessWidget {
     return StreamBuilder<List<Job>>(
         stream: database.jobsStream(),
         builder: (context, snapShot) {
-          if (snapShot.hasData) {
-            final jobs = snapShot.data;
-            final children = jobs
-                .map((job) => JobListTile(
-                      job: job,
-                      onTap: () => EditJobPage.show(context, job: job),
-                    ))
-                .toList();
-            return ListView(children: children);
-          }
-
-          if (snapShot.hasError) {
-            return Center(
-              child: Text('Some error occurred'),
-            );
-          }
-          return Center(
-            child: CircularProgressIndicator(),
+          return ListItemBuilder<Job>(
+            snapshot: snapShot,
+            itemBuilder: (context, job) => JobListTile(
+                job: job, onTap: () => EditJobPage.show(context, job: job)),
           );
         });
   }
