@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_demo2/common_widget/show_alert_dialog.dart';
 import 'package:flutter_demo2/common_widget/show_exception_alert_dialog.dart';
 import 'package:flutter_demo2/models/job.dart';
+import 'package:flutter_demo2/screen/homePage/job_list_tile.dart';
+import 'package:flutter_demo2/screen/homePage/edit_job_page.dart';
 import 'package:flutter_demo2/services/Database.dart';
 import 'package:flutter_demo2/services/auth.dart';
 import 'package:provider/provider.dart';
 
 class JobsPage extends StatelessWidget {
-
   void _signOt(BuildContext context) async {
     try {
       final auth = Provider.of<AuthBase>(context, listen: false);
@@ -30,16 +31,6 @@ class JobsPage extends StatelessWidget {
     }
   }
 
-  Future<void> _createJob(BuildContext context) async {
-    try {
-      final database = Provider.of<DataBase>(context, listen: false);
-      await database.createJob(Job(name: 'Blogging', ratePerHour: 10));
-    } on FirebaseException catch (e) {
-      showExceptionAlertDialog(context,
-          title: 'Operation failed', exception: e);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,7 +49,7 @@ class JobsPage extends StatelessWidget {
       ),
       body: _buildContents(context),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _createJob(context),
+        onPressed: () => EditJobPage.show(context),
         child: Icon(Icons.add),
       ),
     );
@@ -69,19 +60,25 @@ class JobsPage extends StatelessWidget {
     return StreamBuilder<List<Job>>(
         stream: database.jobsStream(),
         builder: (context, snapShot) {
-          if(snapShot.hasData)
-            {
-              final jobs = snapShot.data ;
-              final children = jobs.map((job) => Text(job.name)).toList();
-              return ListView(children: children);
-            }
+          if (snapShot.hasData) {
+            final jobs = snapShot.data;
+            final children = jobs
+                .map((job) => JobListTile(
+                      job: job,
+                      onTap: () => EditJobPage.show(context, job: job),
+                    ))
+                .toList();
+            return ListView(children: children);
+          }
 
-          if(snapShot.hasError)
-            {
-              return Center(child: Text('Some error occurred'),);
-            }
-          return Center(child: CircularProgressIndicator(),);
-        }
-    );
+          if (snapShot.hasError) {
+            return Center(
+              child: Text('Some error occurred'),
+            );
+          }
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        });
   }
 }
