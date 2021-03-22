@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo2/common_widget/show_exception_alert_dialog.dart';
-import 'package:flutter_demo2/screen/app_sign_in/bloc/sign_in_bloc.dart';
+import 'package:flutter_demo2/screen/app_sign_in/bloc/sign_in_manager.dart';
 import 'package:flutter_demo2/screen/app_sign_in/email_sign_in_page.dart';
 import 'package:flutter_demo2/screen/app_sign_in/sign_in_button.dart';
 import 'package:flutter_demo2/screen/app_sign_in/social_sign_in_button.dart';
@@ -9,12 +9,30 @@ import 'package:flutter_demo2/services/auth.dart';
 import 'package:provider/provider.dart';
 
 class SignInPage extends StatelessWidget {
+  const SignInPage({Key key, @required this.manager, @required this.isLoading})
+      : super(key: key);
 
-  static Widget create (BuildContext context)
-  {
-    return Provider<SignInBloc>(
-        create: (_) => SignInBloc() ,
-      child: SignInPage(),
+  final SignInManager manager;
+
+  final bool isLoading;
+
+  static Widget create(BuildContext context) {
+    final auth = Provider.of<AuthBase>(context);
+    return ChangeNotifierProvider<ValueNotifier<bool>>(
+      create: (_) => ValueNotifier(false),
+      child: Consumer<ValueNotifier<bool>>(
+        builder: (_, isLoading, __) => Provider<SignInManager>(
+          create: (_) => SignInManager(
+            auth: auth,
+            isLoading: isLoading,
+          ),
+          child: Consumer<SignInManager>(
+              builder: (_, manager, __) => SignInPage(
+                    manager: manager,
+                    isLoading: isLoading.value,
+                  )),
+        ),
+      ),
     );
   }
 
@@ -31,42 +49,27 @@ class SignInPage extends StatelessWidget {
   }
 
   Future<void> _signInAnonymously(BuildContext context) async {
-      final bloc = Provider.of<SignInBloc>(context , listen: false) ;
     try {
-      bloc.setIsLoading(true);
-      final auth = Provider.of<AuthBase>(context, listen: false);
-
-      auth.signInAnonymously();
+      await manager.signInAnonymously();
     } on Exception catch (e) {
       _showSignInError(context, e);
-    } finally {
-      bloc.setIsLoading(false);
     }
   }
 
   Future<void> _signInWithGoogle(BuildContext context) async {
-      final bloc = Provider.of<SignInBloc>(context , listen: false) ;
     try {
-      bloc.setIsLoading(true);
-      final auth = Provider.of<AuthBase>(context, listen: false);
-      auth.signInWithGoogle();
+      await manager.signInWithGoogle();
     } on Exception catch (e) {
       _showSignInError(context, e);
-    } finally {
-      bloc.setIsLoading(false);
     }
   }
 
   Future<void> _signInWithFacebook(BuildContext context) async {
-      final bloc = Provider.of<SignInBloc>(context , listen: false) ;
     try {
-      bloc.setIsLoading(true);
-      final auth = Provider.of<AuthBase>(context, listen: false);
-      auth.signInWithFacebook();
+      await manager.signInWithFacebook();
     } on Exception catch (e) {
       _showSignInError(context, e);
-    } finally {
-      bloc.setIsLoading(false);    }
+    }
   }
 
   void _signInWithEmail(BuildContext context) {
@@ -81,27 +84,19 @@ class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // shortcut => extend selection => ctrl + arrow up + press button W
-    final bloc = Provider.of<SignInBloc>(context , listen: false) ;
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(
-          'Time Tracker',
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: Text(
+            'Time Tracker',
+          ),
+          centerTitle: true, // this is all you need
+          elevation: 2.0,
         ),
-        centerTitle: true, // this is all you need
-        elevation: 2.0,
-      ),
-      body: StreamBuilder<bool>(
-        stream: bloc.isLoadingStream,
-        initialData: false,
-        builder: (context, snapshot) {
-          return _buildContent(context , snapshot.data);
-        }
-      ),
-    );
+        body: _buildContent(context));
   }
 
-  Widget _buildContent(BuildContext context , bool isLoading) {
+  Widget _buildContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(
@@ -109,7 +104,7 @@ class SignInPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 50.0, child: _buildHeader(isLoading)),
+            SizedBox(height: 50.0, child: _buildHeader()),
             SizedBox(
               height: 48.0,
             ),
@@ -179,7 +174,7 @@ class SignInPage extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(bool isLoading) {
+  Widget _buildHeader() {
     if (isLoading) {
       return Center(
         child: CircularProgressIndicator(),
