@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo2/screen/app_sign_in/sign_in_page.dart';
-import 'package:flutter_demo2/screen/homePage/home_page.dart';
+import 'package:flutter_demo2/screen/homePage/job_page.dart';
+import 'package:flutter_demo2/services/Database.dart';
 import 'package:flutter_demo2/services/auth.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +21,9 @@ class LandingPage extends StatelessWidget {
             if (user == null) {
               return SignInPage.create(context);
             }
-            return HomePage( );
+            return Provider<DataBase>(
+                create: (_) => FireStoreDatabase(uId: user.uid),
+                child: JobsPage( ));
           }
           return Scaffold(
             body: CircularProgressIndicator(),
