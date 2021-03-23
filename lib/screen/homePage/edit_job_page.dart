@@ -10,11 +10,10 @@ import 'package:provider/provider.dart';
 class EditJobPage extends StatefulWidget {
   const EditJobPage({Key key, @required this.dataBase, this.job}) : super(key: key);
 
-  final DataBase dataBase;
+  final Database dataBase;
   final Job job ;
 
-  static Future<void> show(BuildContext context , {Job job}) async {
-    final database = Provider.of<DataBase>(context, listen: false);
+  static Future<void> show(BuildContext context , {Database database ,Job job}) async {
     await Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => EditJobPage(
         dataBase: database,
@@ -75,7 +74,7 @@ class _EditJobPageState extends State<EditJobPage> {
         }
         else
           {
-            final id = widget.job?.id ?? documentIdFormCurrentDate() ;
+            final id = widget.job?.id ?? documentIdFromCurrentDate() ;
             final job = Job(name: _name, ratePerHour: _ratePerHour , id: id);
             await widget.dataBase.setJob(job);
             Navigator.of(context).pop();
