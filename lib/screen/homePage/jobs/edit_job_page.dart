@@ -5,7 +5,6 @@ import 'package:flutter_demo2/common_widget/show_alert_dialog.dart';
 import 'package:flutter_demo2/common_widget/show_exception_alert_dialog.dart';
 import 'package:flutter_demo2/models/job.dart';
 import 'package:flutter_demo2/services/Database.dart';
-import 'package:provider/provider.dart';
 
 class EditJobPage extends StatefulWidget {
   const EditJobPage({Key key, @required this.dataBase, this.job}) : super(key: key);
@@ -14,7 +13,7 @@ class EditJobPage extends StatefulWidget {
   final Job job ;
 
   static Future<void> show(BuildContext context , {Database database ,Job job}) async {
-    await Navigator.of(context).push(MaterialPageRoute(
+    await Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
       builder: (context) => EditJobPage(
         dataBase: database,
         job: job,

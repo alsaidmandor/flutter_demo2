@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_demo2/common_widget/show_alert_dialog.dart';
 import 'package:flutter_demo2/common_widget/show_exception_alert_dialog.dart';
 import 'package:flutter_demo2/models/job.dart';
-import 'package:flutter_demo2/screen/homePage/empty_content.dart';
 import 'package:flutter_demo2/screen/homePage/job_entries/job_entries_page.dart';
-import 'package:flutter_demo2/screen/homePage/job_list_tile.dart';
-import 'package:flutter_demo2/screen/homePage/edit_job_page.dart';
-import 'package:flutter_demo2/screen/homePage/list_items_builder.dart';
+import 'file:///E:/Programming/Courses/FlutterProjects/flutter_demo2/lib/screen/homePage/jobs/job_list_tile.dart';
+import 'file:///E:/Programming/Courses/FlutterProjects/flutter_demo2/lib/screen/homePage/jobs/edit_job_page.dart';
+import 'file:///E:/Programming/Courses/FlutterProjects/flutter_demo2/lib/screen/homePage/jobs/list_items_builder.dart';
 import 'package:flutter_demo2/services/Database.dart';
 import 'package:flutter_demo2/services/auth.dart';
 import 'package:provider/provider.dart';
@@ -51,23 +50,13 @@ class JobsPage extends StatelessWidget {
         title: Text('Jobs'),
         centerTitle: true, // this is all you need
         actions: [
-          TextButton(
-            onPressed: () => _confirmSignOut(context),
-            child: Text(
-              'Logout',
-              style: TextStyle(color: Colors.white, fontSize: 15.0),
-            ),
-          ),
+          IconButton(icon: Icon(Icons.add), onPressed:() => EditJobPage.show(
+       context,
+      database: Provider.of<Database>(context, listen: false),
+    ),),
         ],
       ),
       body: _buildContents(context),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => EditJobPage.show(
-          context,
-          database: Provider.of<Database>(context, listen: false),
-        ),
-        child: Icon(Icons.add),
-      ),
     );
   }
 

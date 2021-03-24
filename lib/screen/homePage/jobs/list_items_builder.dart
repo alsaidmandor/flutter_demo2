@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo2/screen/homePage/empty_content.dart';
+import 'file:///E:/Programming/Courses/FlutterProjects/flutter_demo2/lib/screen/homePage/jobs/empty_content.dart';
 
 typedef ItemWidgetBuilder<T> = Widget Function(BuildContext context, T item);
 

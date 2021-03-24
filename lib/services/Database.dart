@@ -8,15 +8,21 @@ import 'api_path.dart';
 
 abstract class Database {
   Future<void> setJob(Job job);
+
   Future<void> deleteJob(Job job);
+
   Stream<List<Job>> jobsStream();
 
+  Stream<Job> jobStream({@required String jobId}) ;
+
   Future<void> setEntry(Entry entry);
+
   Future<void> deleteEntry(Entry entry);
+
   Stream<List<Entry>> entriesStream({Job job});
 }
 
- String documentIdFromCurrentDate() => DateTime.now().toIso8601String();
+String documentIdFromCurrentDate() => DateTime.now().toIso8601String();
 
 class FireStoreDatabase implements Database {
   FireStoreDatabase({@required this.uid}) : assert(uid != null);
@@ -26,9 +32,9 @@ class FireStoreDatabase implements Database {
 
   @override
   Future<void> setJob(Job job) => _service.setData(
-    path: ApiPath.job(uid, job.id),
-    data: job.toMap(),
-  );
+        path: ApiPath.job(uid, job.id),
+        data: job.toMap(),
+      );
 
   @override
   Future<void> deleteJob(Job job) async {
@@ -42,23 +48,27 @@ class FireStoreDatabase implements Database {
     // delete job
     await _service.deleteData(path: ApiPath.job(uid, job.id));
   }
+  @override
+  Stream<Job> jobStream({@required String jobId}) => _service.documentStream(
+      path: ApiPath.job(uid, jobId),
+      builder: (data, documentId) => Job.fromMap(data, documentId));
 
   @override
   Stream<List<Job>> jobsStream() => _service.collectionStream(
-    path: ApiPath.jobs(uid),
-    builder: (data, documentId) => Job.fromMap(data, documentId),
-  );
+        path: ApiPath.jobs(uid),
+        builder: (data, documentId) => Job.fromMap(data, documentId),
+      );
 
   @override
   Future<void> setEntry(Entry entry) => _service.setData(
-    path: ApiPath.entry(uid, entry.id),
-    data: entry.toMap(),
-  );
+        path: ApiPath.entry(uid, entry.id),
+        data: entry.toMap(),
+      );
 
   @override
   Future<void> deleteEntry(Entry entry) => _service.deleteData(
-    path: ApiPath.entry(uid, entry.id),
-  );
+        path: ApiPath.entry(uid, entry.id),
+      );
 
   @override
   Stream<List<Entry>> entriesStream({Job job}) =>
